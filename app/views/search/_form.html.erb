@@ -1,0 +1,21 @@
+<%= form_with(url: search_path,method: :get, data:{
+    controller: "search",
+    action:"keydown->search#suggestions",
+    suggestions_url: search_suggestions_path,
+})do |form| %>  
+    <div data-search-target= "input">
+        <%=form.text_field :query , data:{
+            search_target: "input",
+            action: "blur->search#hideSuggestions",
+        },
+        placeholder: "Searching....",autocomplete: "off"%>
+        <%=form.label :filter%>
+        
+<%= form.select :filter, options_for_select(Filter.select(:name).distinct.map{ |c| [c.name] }.insert(0, nil)) %>
+        
+        <%= form.submit "Search"%>
+        <div id="suggestions" data-search-target="suggestions" data-action="mousedown->search#childClicked">
+            <%= render partial: "search/suggestions", locals:{results: results}%>
+        </div>
+    </div>
+<%end%>
